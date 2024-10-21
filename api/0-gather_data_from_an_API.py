@@ -10,10 +10,19 @@ def get_employee_info(employee_id):
     """
     Get employee information by employee ID
     """
-    url = f'https://jsonplaceholder.typicode.com/users/{employee_id}/todos'
     url = f'https://jsonplaceholder.typicode.com/users/{employee_id}/'
     response = requests.get(url)
     return response.json()
+
+
+def get_employee_todos(employee_id):
+    """
+    Get the TODO list of the employee by employee ID
+    """
+    url = f'https://jsonplaceholder.typicode.com/users/{employee_id}/todos'
+    response = requests.get(url)
+    return response.json()
+
 
 def main(employee_id):
     """
