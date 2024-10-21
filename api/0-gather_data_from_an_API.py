@@ -29,24 +29,28 @@ def main(employee_id):
     Main function to fetch and display the TODO list progress of the employee
     """
     employee = get_employee_info(employee_id)
-    employee_name = employee.get("name")
+    
+    employee_name = employee.get("name", "").strip()
 
     emp_todos = get_employee_todos(employee_id)
     tasks = {todo.get("title"): todo.get("completed") for todo in emp_todos}
 
     total_tasks = len(tasks)
-    completed_tasks = [completed for completed in tasks.values() if completed]
+    completed_tasks = [title for title, completed in tasks.items() if completed]
     completed_tasks_count = len(completed_tasks)
 
-    print(f"Employee {employee_name} is done with tasks"
-          f"({completed_tasks_count}/{total_tasks}):")
-    for title, completed in tasks.items():
-        if completed:
-            print(f"\t {title}")
+    print(f"Employee {employee_name} is done with tasks({completed_tasks_count}/{total_tasks}):")
+
+    for title in completed_tasks:
+        print(f"\t {title}")
 
 
 if __name__ == "__main__":
     if len(argv) > 1:
-        main(argv[1])
+        try:
+            employee_id = int(argv[1])
+            main(employee_id)
+        except ValueError:
+            print("Employee ID must be an integer.")
     else:
         print("Usage: ./0-gather_data_from_an_API.py <employee_id>")
