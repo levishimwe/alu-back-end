@@ -37,12 +37,14 @@ def main(employee_id):
     print("Employee {} is done with tasks({}/{}):".format(
         employee_name, completed_tasks, total_tasks))
     
+    # Print completed tasks with exact formatting
     for todo in emp_todos:
         if todo.get("completed"):
-            print("\t {}".format(todo.get("title")))
+            print("\t {}".format(todo.get('title')))
+
 
 if __name__ == "__main__":
     if len(argv) > 1:
-        main(argv[1])
+        main(int(argv[1]))
     else:
         print("Usage: ./0-gather_data_from_an_API.py <employee_id>")
