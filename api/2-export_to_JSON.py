@@ -1,60 +1,36 @@
 #!/usr/bin/python3
-"""
-Module to fetch user information and export TODO list to a JSON file
-"""
+"""Script that gets user data (Todo list) from API
+and then export the result to csv file. """
+
 import json
 import requests
 import sys
 
 
-def get_employee_info(employee_id):
-    """
-    Get employee information by employee ID
-    """
-    url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
-    response = requests.get(url)
-    return response.json()
+def main():
+    """main function"""
+    user_id = int(sys.argv[1])
+    todo_url = 'https://jsonplaceholder.typicode.com/todos'
+    user_url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
+
+    response = requests.get(todo_url)
+    user_name = requests.get(user_url).json().get('username')
+    user_data = []
+    output = {user_id: user_data}
+
+    for todo in response.json():
+        if todo.get('userId') == user_id:
+            user_data.append(
+                {
+                    "task": todo.get('title'),
+                    "completed": todo.get('completed'),
+                    "username": user_name,
+                })
+    print(output)
+    file_name = "{}.json".format(user_id)
+    with open(file_name, 'w') as file:
+        json.dump(output, file)
 
 
-def get_employee_todos(employee_id):
-    """
-    Get the TODO list of the employee by employee ID
-    """
-    url = f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos"
-    response = requests.get(url)
-    return response.json()
-
-
-def export_to_json(employee_id, todos):
-    """
-    Export TODO list to a JSON file
-    """
-    filename = f"{employee_id}.json"
-    with open(filename, "w") as file:
-        json.dump({employee_id: todos}, file)
-
-
-def main(employee_id):
-    """
-    Main function to fetch user info and TODO list, then export to JSON
-    """
-    user_info = get_employee_info(employee_id)
-    todos_info = get_employee_todos(employee_id)
-
-    employee_username = user_info["username"]
-
-    todos_info_sorted = [
-        {
-            "task": task["title"],
-            "completed": task["completed"],
-            "username": employee_username
-        } for task in todos_info
-    ]
-
-    export_to_json(employee_id, todos_info_sorted)
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        main(sys.argv[1])
-    else:
-        print("Usage: ./2-export_to_JSON.py <employee_id>")
+if __name__ == '__main__':
+    main()
